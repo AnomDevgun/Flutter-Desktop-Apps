@@ -4,6 +4,10 @@ import 'package:desktop_window/desktop_window.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  Size? size = WidgetsBinding.instance?.window.physicalSize;
+  double? width = size?.width;
+  double? height = size?.height;
+  DesktopWindow.setMinWindowSize(Size(width!/2, height!/2));
   runApp(const MyApp());
 }
 
@@ -13,11 +17,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Flutter Media Player'),
     );
   }
 }
@@ -41,19 +46,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _selectedIndex = 1;
+  static const TextStyle optionStyle =
+  TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+  static const List<Widget> _widgetOptions = <Widget>[
+    Text(
+      'Index 0: Home',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 1: Business',
+      style: optionStyle,
+    ),
+    Text(
+      'Index 2: School',
+      style: optionStyle,
+    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    DesktopWindow.setMinWindowSize(const Size(600, 600));
+
   }
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -83,19 +106,33 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children:  [
-                  IconButton(icon: SizedBox.fromSize(size: const Size.fromRadius(200.0),child: const FittedBox(child: Icon(Icons.skip_previous_outlined))),
-                  onPressed: (){},iconSize: 50.0),
-                  IconButton(icon: SizedBox.fromSize(size: const Size.fromRadius(200.0),child: const FittedBox(child: Icon(Icons.play_arrow_outlined))),
-                  onPressed: (){},iconSize: 50.0),
-                  IconButton(icon: SizedBox.fromSize(size: const Size.fromRadius(200.0),child: const FittedBox(child: Icon(Icons.skip_next_outlined))),
-                  onPressed: (){},iconSize: 50.0),
+                children:  const [
+                  Text('The Seek bar will go here'),
                 ],
               ),
             ),
           ],
         ),
       ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.skip_previous_outlined),
+              label: 'rewind',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.play_arrow_rounded),
+              label: 'play',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.skip_next_outlined),
+              label: 'skip',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.amber[800],
+          onTap: _onItemTapped,
+        )
        // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
